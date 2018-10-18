@@ -1,6 +1,7 @@
 
 
-var playerChar;
+var playerChar = "", enemyChar = "";
+
 
 function Character(attack, counter, health) {
     this.attack = attack;
@@ -8,37 +9,47 @@ function Character(attack, counter, health) {
     this.health = health;
 };
 
-var player1 = new Character(100, 100, 100);
-var player2 = new Character(50, 50, 50);
-var player3 = new Character(25, 25, 25);
+
+
+function fight(player, enemy) {
+    $("#log").append("<br>" + player + " is fighting " + enemy + "!");
+}
+
+// var player1 = new Character(100, 100, 100);
+// var player2 = new Character(50, 50, 50);
+// var player3 = new Character(25, 25, 25);
 $(document).ready(function () {
-    
-    
-    
-    $(".char").on("click",function(){
-        $(this).addClass("highlight");
-        $("#log").text(this.id + " selected.");
-        if(this.id=="strong"){
-            
-            playerChar = player1;
-        }
-        else if(this.id == "medium"){        
-            playerChar = player2;
+
+    $("#top_display").html("<p>Select your character!</p>");
+
+    $(".char").on("click", function () {
+        if (playerChar == "") {
+            $(".char").css("display", "none");
+            $(this).prop("disabled", "disabled");
+            $(this).css("display", "inline");
+            $(this).addClass("highlight");
+            $("#log").text(this.id + " selected.");
+            playerChar = this.id;
+            $("#top_display").html("<p>Select your enemy!</p>");
+            $("#char_select > input").each(function () {
+                console.log(this.id == playerChar);
+                if (this.id != playerChar) {
+                    $(this).css("display", "inline");
+                    $("#enemy_select").append(this);
+                }
+            });
         }
         else{
-            playerChar = player3;
+            enemyChar = this.id;
+            $("#battlefield").append(this);
+            //  $(this).prop("disabled"); 
         }
-        $(".char").css("highlight");
-        $(".char").attr("disabled","disabled");
-
-        // $(".char").each(function(){
-        //     this.attr("disabled","disabled");
-        // });
-
+            
     });
 
-    $(".mob").on("click",function(){
-        $("#log").append(this.id+" selected.");
-    })
+
+
+
+
 
 });
