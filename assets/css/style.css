@@ -1,28 +1,65 @@
+body{
+    background-image: url("../images/background.jpg");
+    
+}
+div{
+    color: white;
+    
+}
+
+.char_wrapper{
+    max-width: 620px;
+    background-color:black;
+}
+
+#log{
+    background-color:black;
+}
+
 .highlight{
     border: green;
     border-style: solid;
     border-width: 5px;
 }
 
-.highlight-enemy{
+.highlight_enemy{
     border: red;
     border-style: solid;
     border-width: 5px;
 }
 
+.name{
+    font: white;
+    font-weight: bold;
+    text-align: center;
+    
+}
+
 .char_pic{
+    display: flex;
+    justify-content: center;
     position: relative;
     width:100px;
     height:100px;
+    margin: auto;
 }
-/* 
-.tooltip {
+.current_health::before{
+    content: "HP: "
+}
+.current_health{
+    text-align:center;
+    visibility: hidden;
+}
+.char_wrapper {
+    width: 150px;
+    height: 150px;
     position: relative;
     display: inline-block;
-    border-bottom: 1px dotted black;
+    
+   
 }
 
-.tooltip .char_info {
+.char_wrapper .char_info {
     visibility: hidden;
     width: 105px;
     background-color: #555;
@@ -39,8 +76,12 @@
     transition: opacity 0.3s;
 }
 
-.tooltip:hover .char_info {
+.char_wrapper:hover .char_info {
     visibility: visible;
     opacity: 1;
-} */
+}
 
+
+.enemy{
+    display: none;
+}

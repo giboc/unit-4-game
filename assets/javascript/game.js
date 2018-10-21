@@ -1,5 +1,3 @@
-
-
 var playerChar = "", enemyChar = "";
 
 
@@ -13,13 +11,16 @@ function Character(name, attack, counter, health) {
 
 function char_init(name) {
     var new_char;
-    if (name == "hk47")
+    if (name == "HK 47")
         new_char = new Character(name, 8, 15, 120);
-    else if (name == "ackbar")
+    else if (name == "Admiral Ackbar") {
         new_char = new Character(name, 14, 5, 100);
-    else if (name == "dooku")
+        var audio = new Audio("assets/sounds/trap.mp3");
+        audio.play();
+    }
+    else if (name == "Count Dooku")
         new_char = new Character(name, 8, 20, 150);
-    else if (name == "stormtrooper")
+    else if (name == "Stormtroopers")
         new_char = new Character(name, 7, 25, 180);
     else {
         new_char = new Character(name, 0, 0, 0);
@@ -28,87 +29,107 @@ function char_init(name) {
     return new_char;
 }
 function fight(player, enemy) {
-    
-    $("#log").append("<br>" + player.name + " is fighting " + enemy.name + "!");
-    $("#log").append("<br>" + player.name + "'s attack: " + player.attack);
-    $("#log").append("<br>" + enemy.name + "'s counter" + enemy.counter);
+    $("#log").html("");
+    $("#log").append("<br>" + player.name + " attacks for " + player.attack);
+    $("#log").append("<br>" + enemy.name + " counters for " + enemy.counter);
     enemy.health -= player.attack;
     player.attack += player.baseAttack;
-    $("#log").append("<br>" + enemy.name + "'s remaining health: " + enemy.health);
+    $("#battlefield").find(".current_health").text(enemyChar.health);
     if (enemy.health <= 0)
         return 1;
     player.health -= enemy.counter;
+    $("#char_select").find(".current_health").text(playerChar.health);
     if (player.health <= 0)
         return -1;
-    $("#log").append("<br>" + player.name + "'s remaining health: " + player.health);
+
     return 0;
-    
+
 }
 
-// var player1 = new Character(100, 100, 100);
-// var player2 = new Character(50, 50, 50);
-// var player3 = new Character(25, 25, 25);
 $(document).ready(function () {
-    // $(".char").hover(function(){
-    //     alert("test");
-    // })
-    // $("#hk47_info").html("Health: 120<br>Base Attack: 8");
-    // $("#ackbar_info").html("Health: 100<br>Base Attack: 14");
-    // $("#dooku_info").html("Health: 150<br>Base Attack: 8");
-    // $("#stormtrooper_info").html("Health: 180<br>Base Attack: 7");
+
+    $("#hk47_info").html('Health: 120<br><p class="char">Base Attack: 8</p><p class="enemy">Counter: 15</p>');
+    $("#ackbar_info").html('Health: 100<br><p class="char">Base Attack: 14</p><p class="enemy">Counter: 5');
+    $("#dooku_info").html('Health: 150<br><p class="char">Base Attack: 8</p><p class="enemy">Counter: 20</p>');
+    $("#stormtrooper_info").html('Health: 180<br><p class="char">Base Attack: 7</p><p class="enemy">Counter: 25</p>');
 
     $("#top_display").html("<p>Select your character!</p>");
 
-    $(".char").on("click", function () {
+    $(".char_wrapper").on("click", function () {
         if (playerChar == "") {
             playerChar = char_init(this.id);
             $(this).addClass("highlight");
-            $(this).prop("disabled", true);
-            $("#char_select > input").each(function () {
+            $(this).find("input").prop("disabled", true);
+            $(this).find(".char_info").css("visibility", "hidden");
+            $(this).find(".current_health").text(playerChar.health);
+            $(this).find(".current_health").css("visibility", "visible");
+            
+            
+            
+            
+            $(".char_wrapper").each(function () {
                 if (this.id != playerChar.name)
                     $("#enemy_select").append(this);
             });
+
+            $("#enemy_select > .char_wrapper").each(function () {
+                $(this).find(".char_info").find(".enemy").css("display","inline");
+                $(this).find(".char_info").find(".char").css("display","none");
+            });
+
             $("#top_display").text("Select your opponent!");
 
         }
 
-        // if (playerChar == "") {
-        //     $(".char").css("display", "none");
-        //     $(this).prop("disabled", "disabled");
-        //     $(this).css("display", "inline");
-        //     $(this).addClass("highlight");
-        //     $("#log").text(this.id + " selected.");
-        //     playerChar = this.id;
-        //     $("#top_display").html("<p>Select your enemy!</p>");
-        //     $("#char_select > input").each(function () {
-        //         console.log(this.id == playerChar);
-        //         if (this.id != playerChar) {
-        //             $(this).css("display", "inline");
-        //             $("#enemy_select").append(this);
-        //         }
-        //     });
-        // }
-        else if (enemyChar == "") {
+        else {
             enemyChar = char_init(this.id);
+            $("#enemy_select > .char_wrapper").each(function () {
+                $(this).find(".char_pic").prop("disabled", true);
+                $(this).find(".char_info").css("visibility", "hidden")
+            });
+
+            // $("#enemy_select > .char_wrapper").each(function () {
+            //     console.log($(this).find(".char_info"));
+            // });
+            $(this > ".enemy").css("display","inline");
+            $(this > ".char").css("display","none");
+
+
+            $(this).find(".char_info").css("visibility", "hidden");
+            $(this).addClass("highlight_enemy");
+            $(this).find(".current_health").text(enemyChar.health);
+            $(this).find(".current_health").css("visibility", "visible");
+
+            $("#top_display").text("Attack your opponent!");
+
             $("#battlefield").append(this);
-            $("#enemy_select > input").each(function () {
-                $(this).prop("disabled", true);
-            })
-            $("#top_display").text("Time to battle!");
-            //  $(this).prop("disabled"); 
         }
-        else{
-            switch (fight(playerChar, enemyChar)){
+
+        
+    });
+
+    $(":button").click(function () {
+        if ($("#battlefield").html() == "")
+            $("#log").text("Not enough combatants.");
+        else {
+            switch (fight(playerChar, enemyChar)) {
                 case 1:
-                    alert("you win!");
+                    $("#log").append("<br>You win!");
                     $("#battlefield").html("");
+                    $("#top_display").text("Pick a new opponent");
+                    if($("#enemy_select").html()=="")
+                        $("#top_display").text("You have slain all your opponents!");
                     enemyChar = "";
-                    $("#enemy_select > input").each(function(){
-                        $(this).prop("disabled",false);
+                    $("#enemy_select > .char_wrapper").each(function () {
+                        $(this).find(".char_pic").prop("disabled", false);
+                        $(this).find(".char_info").css("visibility", "visible");
                     });
                     break;
                 case -1:
-                    alert("you lose");
+                    $(this).prop("disabled",true);
+                    $("#log").append("<br>You lose");
+                    $("#log").append("<br><input type='button' value='Restart' onclick=location.reload()>");
+                    
                     break;
                 case 0:
                     //nothing happens;
@@ -118,10 +139,4 @@ $(document).ready(function () {
             }
         }
     });
-
-
-
-
-
-
 });
